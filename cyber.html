@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AI Network Firewall</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-light: #8a84ff;
+            --secondary: #00bfa5;
+            --danger: #ff6b6b;
+            --warning: #ffc107;
+            --success: #28a745;
+            --dark: #1a2035;
+            --darker: #121826;
+            --light: #f8fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #94a3b8;
+        }
+         html,body{
+             width: 100%;
+             height: 100%;
+             overflow-x: hidden;
+         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body.light-mode {
+            background-color: #f5f7fa;
+            color: #1e293b;
+            --light: #1e293b;
+            --dark: #f5f7fa;
+            --darker: #e2e8f0;
+            --gray: #64748b;
+            --dark-gray: #475569;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(26, 32, 53, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode header {
+            background-color: rgba(245, 247, 250, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--gray);
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #e05555;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: #000;
+        }
+
+        .btn-warning:hover {
+            background-color: #e6b000;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            padding: 2rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1200px;
+            padding: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            align-items: stretch;
+            justify-content: space-between;
+        }
+        
+
+        .stat-card {
+            flex: 1 1 250px;
+            max-width: 100%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.light-mode .stat-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+
+        .stat-card.critical {
+            border-color: var(--danger);
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        body.light-mode .stat-title {
+            color: var(--dark-gray);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(108, 99, 255, 0.2);
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        body.light-mode .stat-change {
+            color: var(--dark-gray);
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .trend-up {
+            color: var(--danger);
+        }
+
+        .trend-down {
+            color: var(--success);
+        }
+
+        .stat-bg-icon {
+            position: absolute;
+            right: 1rem;
+            bottom: 1rem;
+            font-size: 3rem;
+            opacity: 0.1;
+        }
+
+        /* Charts Section */
+        .chart-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 1 1 100%;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+
+        body.light-mode .chart-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 1400px) {
+            .chart-card {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-card {
+                grid-column: span 12;
+            }
+            .btn {
+                background-color: var(--primary);
+                color: white;
+                border: none;
+                padding: 0.40rem 1rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .toggle-btn{
+                font-size: 1rem;
+            }
+        }
+
+        .chart-card.wide {
+            grid-column: span 8;
+        }
+
+        .chart-card.tall {
+            flex-grow: 2;
+            max-height: 100%;
+            overflow-y: auto;
+        }        
+
+        .chart-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        body.light-mode .chart-title {
+            color: #1e293b;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .chart-btn:hover {
+            color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .chart-container.tall {
+            height: 500px;
+        }
+
+        /* Threats Section */
+        .threats-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            flex: 1 1 300px; /* Flexible width with a min size */
+            min-width: 250px;
+            max-width: 50%; /* Ensures it doesn't get too wide */
+        }
+
+        body.light-mode .threats-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+        }
+
+        .threats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .threats-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .threats-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .threats-list {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) rgba(255, 255, 255, 0.1);
+        }
+
+        .threats-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .threats-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .threats-list::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 3px;
+        }
+
+        .threat-item {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background-color: rgba(255, 107, 107, 0.1);
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        body.light-mode .threat-item {
+            background-color: rgba(255, 107, 107, 0.15);
+        }
+
+        .threat-item:hover {
+            transform: translateX(5px);
+            background-color: rgba(255, 107, 107, 0.2);
+        }
+
+        .threat-item.warning {
+            border-left-color: var(--warning);
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .threat-item.warning:hover {
+            background-color: rgba(255, 193, 7, 0.2);
+        }
+
+        .threat-item.critical {
+            border-left-color: var(--danger);
+            background-color: rgba(255, 107, 107, 0.2);
+            animation: pulseBg 2s infinite;
+        }
+
+        @keyframes pulseBg {
+            0% { background-color: rgba(255, 107, 107, 0.2); }
+            50% { background-color: rgba(255, 107, 107, 0.4); }
+            100% { background-color: rgba(255, 107, 107, 0.2); }
+        }
+
+        .threat-icon {
+            font-size: 1.25rem;
+        }
+
+        .threat-icon.critical {
+            color: var(--danger);
+        }
+
+        .threat-icon.warning {
+            color: var(--warning);
+        }
+
+        .threat-content {
+            flex: 1;
+        }
+
+        .threat-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .threat-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        body.light-mode .threat-meta {
+            color: var(--dark-gray);
+        }
+
+        .threat-severity {
+            font-weight: 600;
+        }
+
+        .threat-severity.critical {
+            color: var(--danger);
+        }
+
+        .threat-severity.warning {
+            color: var(--warning);
+        }
+
+        /* Geo Map */
+        .geo-map {
+            height: 100%;
+            width: 100%;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        /* Connection Table */
+        .connections-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .connections-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        body.light-mode .connections-table th {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-gray);
+        }
+
+        .connections-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.875rem;
+        }
+
+        body.light-mode .connections-table td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .connections-table tr:hover td {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        body.light-mode .connections-table tr:hover td {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .connection-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-active {
+            background-color: var(--success);
+        }
+
+        .status-closed {
+            background-color: var(--gray);
+        }
+
+        .status-threat {
+            background-color: var(--danger);
+        }
+
+        .connection-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .table-btn:hover {
+            color: var(--primary);
+        }
+        .tall {
+            flex: 1 1 auto;
+            max-height: 400px; /* Adjust based on table content */
+            width: 100%;
+        }
+        
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .chart-card.wide {
+                grid-column: span 6;
+            }
+            
+            .threats-card {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0.5rem;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card,
+            .chart-card.wide,
+            .threats-card {
+                grid-column: span 1;
+            }
+        }
+        @media (max-width: 1024px) {
+            .tall {
+                max-height: none; /* Removes height restriction on smaller screens */
+            }
+        }
+        @media (max-width: 1020px) {
+            .threats-card {
+                max-width: 60%; /* Takes almost half the width */
+                flex: 1 1 48%;
+            }
+        }
+        
+        /* Adjustments for smaller screens (mobile, tablets) */
+        @media (max-width: 720px) {
+            .threats-card {
+                max-width: 100%; /* Takes full width */
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+            </div>
+            <span class="logo-text">ChhaleMeg AI Firewall</span>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <button class="toggle-btn tooltip" id="notificationsBtn">
+                    🔔
+                    <span class="tooltip-text">Notifications (3 new alerts)</span>
+                </button>
+                <button class="toggle-btn tooltip" id="settingsBtn">
+                    ⚙
+                    <span class="tooltip-text">Firewall Settings</span>
+                </button>
+                <button class="toggle-btn" id="themeToggle">🌙</button>
+            </div>
+            <div class="control-group">
+                <button class="btn btn-success" id="mitigateBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Mitigate Threats
+                </button>
+                <button class="btn btn-danger" id="captureBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Start Capture
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Total Network Traffic</span>
+                        <div class="stat-icon">📊</div>
+                    </div>
+                    <div class="stat-value" id="totalTraffic">0 MB</div>
+                    <div class="stat-change">
+                        <span id="trafficRate">0</span> Mbps
+                        <span class="stat-trend trend-up" id="trafficTrend">↑ 12%</span>
+                    </div>
+                    <div class="stat-bg-icon">🌐</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Packets Analyzed</span>
+                        <div class="stat-icon">📦</div>
+                    </div>
+                    <div class="stat-value" id="totalPackets">0</div>
+                    <div class="stat-change">
+                        <span id="packetRate">0</span> packets/sec
+                        <span class="stat-trend trend-up" id="packetTrend">↑ 8%</span>
+                    </div>
+                    <div class="stat-bg-icon">🔍</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Threats Detected</span>
+                        <div class="stat-icon">⚠</div>
+                    </div>
+                    <div class="stat-value" id="threatCount">0</div>
+                    <div class="stat-change">
+                        <span id="threatRate">0</span> threats/min
+                        <span class="stat-trend trend-down" id="threatTrend">↓ 5%</span>
+                    </div>
+                    <div class="stat-bg-icon">🛡</div>
+                </div>
+                <div class="stat-card critical" id="criticalThreatCard">
+                    <div class="stat-header">
+                        <span class="stat-title">Active Attacks</span>
+                        <div class="stat-icon">🔥</div>
+                    </div>
+                    <div class="stat-value" id="activeAttacks">0</div>
+                    <div class="stat-change">
+                        <span id="attackRate">0</span> attacks/min
+                        <span class="stat-trend trend-up" id="attackTrend">↑ 24%</span>
+                    </div>
+                    <div class="stat-bg-icon">💥</div>
+                </div>
+            </div>
+
+            <!-- Protocol Distribution Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Protocol Distribution</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="protocolDetailsBtn">
+                            ℹ
+                            <span class="tooltip-text">View protocol details</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshProtocolBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="protocolChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Geo Threat Map -->
+            <div class="chart-card wide">
+                <div class="chart-header">
+                    <h3 class="chart-title">Threat Geography Map</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="mapZoomInBtn">
+                            ➕
+                            <span class="tooltip-text">Zoom in</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="mapZoomOutBtn">
+                            ➖
+                            <span class="tooltip-text">Zoom out</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshMapBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh map</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="geo-map" id="threatMap"></div>
+                </div>
+            </div>
+
+            <!-- Top Destination Ports -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Destination Ports</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="portsDetailsBtn">
+                            ℹ
+                            <span class="tooltip-text">View port details</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshPortsBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="portsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Traffic Timeline -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Traffic Timeline (Last 5m)</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="trafficExportBtn">
+                            📤
+                            <span class="tooltip-text">Export data</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshTrafficBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trafficChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Active Connections -->
+            <div class="chart-card tall">
+                <div class="chart-header">
+                    <h3 class="chart-title">Active Network Connections</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="connectionsFilterBtn">
+                            🔍
+                            <span class="tooltip-text">Filter connections</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshConnectionsBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container tall">
+                    <table class="connections-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Source IP</th>
+                                <th>Destination</th>
+                                <th>Protocol</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="connectionsTable">
+                            <!-- Connections will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Threats Card -->
+            <div class="threats-card">
+                <div class="threats-header">
+                    <h3 class="threats-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Security Alerts
+                    </h3>
+                    <div class="threats-actions">
+                        <span class="pulse" id="threatIndicator">● Live</span>
+                        <button class="chart-btn tooltip" id="clearThreatsBtn">
+                            🗑
+                            <span class="tooltip-text">Clear all alerts</span>
+                        </button>
+                    </div>
+                </div>
+                <ul class="threats-list" id="threatList">
+                    <li class="threat-item warning">
+                        <span class="threat-icon warning">⚠</span>
+                        <div class="threat-content">
+                            <div class="threat-title">Suspicious DNS Query</div>
+                            <div class="threat-meta">
+                                <span>Just now</span>
+                                <span class="threat-severity warning">Medium severity</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Packet Size Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Packet Size Distribution</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="sizeDetailsBtn">
+                            ℹ
+                            <span class="tooltip-text">View size details</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshSizeBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sizeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Attack Types Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Attack Types</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn tooltip" id="attackDetailsBtn">
+                            ℹ
+                            <span class="tooltip-text">View attack details</span>
+                        </button>
+                        <button class="chart-btn tooltip" id="refreshAttackBtn">
+                            🔄
+                            <span class="tooltip-text">Refresh data</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="attackChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        const protocolCtx = document.getElementById('protocolChart').getContext('2d');
+        const portsCtx = document.getElementById('portsChart').getContext('2d');
+        const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        const sizeCtx = document.getElementById('sizeChart').getContext('2d');
+        const attackCtx = document.getElementById('attackChart').getContext('2d');
+
+        const protocolChart = new Chart(protocolCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['TCP', 'UDP', 'ICMP', 'HTTP', 'HTTPS', 'DNS', 'Other'],
+                datasets: [{
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#6c63ff',
+                        '#00bfa5',
+                        '#f6c23e',
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc',
+                        '#ff6b6b'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#e2e8f0',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const portsChart = new Chart(portsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['80 (HTTP)', '443 (HTTPS)', '22 (SSH)', '53 (DNS)', '3389 (RDP)', '21 (FTP)', '25 (SMTP)'],
+                datasets: [{
+                    label: 'Packet Count',
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#6c63ff',
+                        '#00bfa5',
+                        '#f6c23e',
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc',
+                        '#ff6b6b'
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const trafficChart = new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: Array(30).fill('').map((_, i) => `${i * 10}s`),
+                datasets: [    
+                    {
+                        label: 'Inbound (Mbps)',
+                        data: Array(30).fill(0),
+                        borderColor: '#6c63ff',
+                        backgroundColor: 'rgba(108, 99, 255, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Outbound (Mbps)',
+                        data: Array(30).fill(0),
+                        borderColor: '#00bfa5',
+                        backgroundColor: 'rgba(0, 191, 165, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e2e8f0'
+                        }
+                    }
+                }
+            }
+        });
+
+        const sizeChart = new Chart(sizeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['<100B', '100-500B', '500B-1KB', '1-5KB', '5-10KB', '>10KB'],
+                datasets: [{
+                    label: 'Packet Count',
+                    data: [0, 0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#6c63ff',
+                        '#00bfa5',
+                        '#f6c23e',
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const attackChart = new Chart(attackCtx, {
+            type: 'polarArea',
+            data: {
+                labels: ['DDoS', 'Port Scan', 'SQL Injection', 'XSS', 'Brute Force', 'Malware', 'Phishing'],
+                datasets: [{
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#ff6b6b',
+                        '#f6c23e',
+                        '#6c63ff',
+                        '#00bfa5',
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#e2e8f0',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize threat map
+        const threatMap = L.map('threatMap').setView([20, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(threatMap);
+
+        // Add some sample threat markers
+        const threatMarkers = [
+            { lat: 37.7749, lng: -122.4194, type: 'DDoS', severity: 'high' }, // San Francisco
+            { lat: 40.7128, lng: -74.0060, type: 'Port Scan', severity: 'medium' }, // New York
+            { lat: 51.5074, lng: -0.1278, type: 'Brute Force', severity: 'high' }, // London
+            { lat: 35.6762, lng: 139.6503, type: 'SQL Injection', severity: 'critical' }, // Tokyo
+            { lat: 48.8566, lng: 2.3522, type: 'XSS', severity: 'medium' }, // Paris
+            { lat: 55.7558, lng: 37.6173, type: 'Malware', severity: 'high' }, // Moscow
+            { lat: 39.9042, lng: 116.4074, type: 'Phishing', severity: 'medium' } // Beijing
+        ];
+
+        // Add markers to map
+        threatMarkers.forEach(marker => {
+            const color = marker.severity === 'critical' ? 'red' : 
+                         marker.severity === 'high' ? 'orange' : 'yellow';
+            
+            L.circleMarker([marker.lat, marker.lng], {
+                radius: 8,
+                fillColor: color,
+                color: '#000',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(threatMap)
+            .bindPopup(`<b>${marker.type}</b><br>Severity: ${marker.severity}`);
+        });
+
+        // Map control buttons
+        document.getElementById('mapZoomInBtn').addEventListener('click', () => {
+            threatMap.zoomIn();
+        });
+
+        document.getElementById('mapZoomOutBtn').addEventListener('click', () => {
+            threatMap.zoomOut();
+        });
+
+        document.getElementById('refreshMapBtn').addEventListener('click', () => {
+            // Simulate refreshing map data
+            const newMarker = {
+                lat: Math.random() * 180 - 90,
+                lng: Math.random() * 360 - 180,
+                type: ['DDoS', 'Port Scan', 'SQL Injection', 'XSS', 'Brute Force'][Math.floor(Math.random() * 5)],
+                severity: ['low', 'medium', 'high', 'critical'][Math.floor(Math.random() * 4)]
+            };
+            
+            const color = newMarker.severity === 'critical' ? 'red' : 
+                         newMarker.severity === 'high' ? 'orange' : 
+                         newMarker.severity === 'medium' ? 'yellow' : 'green';
+            
+            L.circleMarker([newMarker.lat, newMarker.lng], {
+                radius: 8,
+                fillColor: color,
+                color: '#000',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(threatMap)
+            .bindPopup(`<b>${newMarker.type}</b><br>Severity: ${newMarker.severity}`);
+        });
+
+        // Sample connections data
+        const sampleConnections = [
+            { id: 1, status: 'active', source: '192.168.1.105', destination: '104.16.85.20:443', protocol: 'HTTPS', duration: '5m 23s', threat: false },
+            { id: 2, status: 'active', source: '10.0.0.15', destination: '8.8.8.8:53', protocol: 'DNS', duration: '12m 45s', threat: false },
+            { id: 3, status: 'active', source: '45.227.253.109', destination: '192.168.1.100:3389', protocol: 'RDP', duration: '2m 18s', threat: true },
+            { id: 4, status: 'closed', source: '192.168.1.101', destination: '151.101.1.69:80', protocol: 'HTTP', duration: '1m 05s', threat: false },
+            { id: 5, status: 'active', source: '192.168.1.102', destination: '172.217.14.206:443', protocol: 'HTTPS', duration: '8m 12s', threat: false },
+            { id: 6, status: 'active', source: '185.143.223.47', destination: '192.168.1.100:22', protocol: 'SSH', duration: '15m 33s', threat: true },
+            { id: 7, status: 'closed', source: '192.168.1.103', destination: '13.107.42.12:443', protocol: 'HTTPS', duration: '3m 47s', threat: false }
+        ];
+
+        // Populate connections table
+        const connectionsTable = document.getElementById('connectionsTable');
+
+        function updateConnectionsTable() {
+            connectionsTable.innerHTML = '';
+            
+            sampleConnections.forEach(conn => {
+                const row = document.createElement('tr');
+                const statusClass = conn.status === 'active' ? 
+                    (conn.threat ? 'status-threat' : 'status-active') : 'status-closed';
+                
+                row.innerHTML = `
+                    <td><span class="connection-status ${statusClass}"></span>${conn.status}</td>
+                    <td>${conn.source}</td>
+                    <td>${conn.destination}</td>
+                    <td>${conn.protocol}</td>
+                    <td>${conn.duration}</td>
+                    <td class="connection-actions">
+                        <button class="table-btn tooltip" data-id="${conn.id}" onclick="viewConnectionDetails(${conn.id})">
+                            👁
+                            <span class="tooltip-text">View details</span>
+                        </button>
+                        <button class="table-btn tooltip" data-id="${conn.id}" onclick="blockConnection(${conn.id})">
+                            🚫
+                            <span class="tooltip-text">Block connection</span>
+                        </button>
+                    </td>
+                `;
+                
+                connectionsTable.appendChild(row);
+            });
+        }
+
+        // Global functions for connection actions
+        window.viewConnectionDetails = function(id) {
+            const conn = sampleConnections.find(c => c.id === id);
+            alert(`Connection Details:\n\nID: ${conn.id}\nStatus: ${conn.status}\nSource: ${conn.source}\nDestination: ${conn.destination}\nProtocol: ${conn.protocol}\nDuration: ${conn.duration}\nThreat: ${conn.threat ? 'Yes' : 'No'}`);
+        };
+
+        window.blockConnection = function(id) {
+            const conn = sampleConnections.find(c => c.id === id);
+            if (confirm(`Are you sure you want to block this connection?\n\nSource: ${conn.source}\nDestination: ${conn.destination}`)) {
+                alert(`Connection from ${conn.source} to ${conn.destination} has been blocked.`);
+                // In a real app, you would send a request to your backend to block the connection
+            }
+        };
+
+        // Simulate real-time data
+        let isCapturing = false;
+        let packetCount = 0;
+        let trafficMB = 0;
+        let threatCount = 0;
+        let activeAttacks = 0;
+        const trafficHistoryIn = Array(30).fill(0);
+        const trafficHistoryOut = Array(30).fill(0);
+        const threatList = document.getElementById('threatList');
+        const captureBtn = document.getElementById('captureBtn');
+        const mitigateBtn = document.getElementById('mitigateBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const clearThreatsBtn = document.getElementById('clearThreatsBtn');
+
+        // Sample threats for demo
+        const sampleThreats = [
+            { 
+                type: "Port Scan Attack", 
+                source: "192.168.1.105", 
+                severity: "High", 
+                time: "Just now",
+                description: "Multiple connection attempts to different ports from the same source IP",
+                critical: false
+            },
+            { 
+                type: "Suspicious DNS Query", 
+                source: "10.0.0.15", 
+                severity: "Medium", 
+                time: "2 mins ago",
+                description: "Unusual DNS query pattern detected, possible DNS tunneling attempt",
+                critical: false
+            },
+            { 
+                type: "Brute Force Attempt", 
+                source: "45.227.253.109", 
+                severity: "Critical", 
+                time: "5 mins ago",
+                description: "Multiple failed login attempts to SSH service (port 22)",
+                critical: true
+            },
+            { 
+                type: "Possible DDoS Attack", 
+                source: "Multiple IPs", 
+                severity: "Critical", 
+                time: "8 mins ago",
+                description: "High volume of traffic from multiple sources targeting port 80",
+                critical: true
+            },
+            { 
+                type: "SQL Injection Attempt", 
+                source: "185.143.223.47", 
+                severity: "High", 
+                time: "12 mins ago",
+                description: "Malicious SQL code detected in HTTP request parameters",
+                critical: false
+            }
+        ];
+
+        // Toggle theme
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            themeToggle.textContent = document.body.classList.contains('light-mode') ? '🌞' : '🌙';
+            
+            // Update chart colors for light mode
+            if (document.body.classList.contains('light-mode')) {
+                protocolChart.options.plugins.legend.labels.color = '#1e293b';
+                trafficChart.options.plugins.legend.labels.color = '#1e293b';
+                trafficChart.options.scales.x.ticks.color = '#475569';
+                trafficChart.options.scales.y.ticks.color = '#475569';
+                trafficChart.options.scales.x.grid.color = 'rgba(0, 0, 0, 0.1)';
+                trafficChart.options.scales.y.grid.color = 'rgba(0, 0, 0, 0.1)';
+                portsChart.options.scales.x.ticks.color = '#475569';
+                portsChart.options.scales.y.ticks.color = '#475569';
+                portsChart.options.scales.y.grid.color = 'rgba(0, 0, 0, 0.1)';
+                sizeChart.options.scales.x.ticks.color = '#475569';
+                sizeChart.options.scales.y.ticks.color = '#475569';
+                sizeChart.options.scales.y.grid.color = 'rgba(0, 0, 0, 0.1)';
+                attackChart.options.plugins.legend.labels.color = '#1e293b';
+                attackChart.options.scales.r.grid.color = 'rgba(0, 0, 0, 0.1)';
+            } else {
+                protocolChart.options.plugins.legend.labels.color = '#e2e8f0';
+                trafficChart.options.plugins.legend.labels.color = '#e2e8f0';
+                trafficChart.options.scales.x.ticks.color = '#94a3b8';
+                trafficChart.options.scales.y.ticks.color = '#94a3b8';
+                trafficChart.options.scales.x.grid.color = 'rgba(255, 255, 255, 0.1)';
+                trafficChart.options.scales.y.grid.color = 'rgba(255, 255, 255, 0.1)';
+                portsChart.options.scales.x.ticks.color = '#94a3b8';
+                portsChart.options.scales.y.ticks.color = '#94a3b8';
+                portsChart.options.scales.y.grid.color = 'rgba(255, 255, 255, 0.1)';
+                sizeChart.options.scales.x.ticks.color = '#94a3b8';
+                sizeChart.options.scales.y.ticks.color = '#94a3b8';
+                sizeChart.options.scales.y.grid.color = 'rgba(255, 255, 255, 0.1)';
+                attackChart.options.plugins.legend.labels.color = '#e2e8f0';
+                attackChart.options.scales.r.grid.color = 'rgba(255, 255, 255, 0.1)';
+            }
+            
+            // Update all charts
+            protocolChart.update();
+            trafficChart.update();
+            portsChart.update();
+            sizeChart.update();
+            attackChart.update();
+        });
+
+        // Toggle capture
+        captureBtn.addEventListener('click', () => {
+            isCapturing = !isCapturing;
+            
+            if (isCapturing) {
+                captureBtn.classList.remove('btn-success');
+                captureBtn.classList.add('btn-danger');
+                captureBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    Stop Capture
+                `;
+                startSimulation();
+            } else {
+                captureBtn.classList.remove('btn-danger');
+                captureBtn.classList.add('btn-success');
+                captureBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Start Capture
+                `;
+            }
+        });
+
+        // Mitigate threats
+        mitigateBtn.addEventListener('click', () => {
+            if (threatCount > 0) {
+                if (confirm(`Are you sure you want to mitigate all ${threatCount} detected threats?`)) {
+                    alert(`Successfully mitigated ${threatCount} threats. Network is now secure.`);
+                    threatCount = 0;
+                    activeAttacks = 0;
+                    document.getElementById('threatCount').textContent = threatCount;
+                    document.getElementById('activeAttacks').textContent = activeAttacks;
+                    document.getElementById('criticalThreatCard').classList.remove('critical');
+                    
+                    // Clear threat list
+                    threatList.innerHTML = '<li class="threat-item"><span class="threat-icon">✅</span><div class="threat-content"><div>No active threats detected</div><div class="threat-meta"><span>Just now</span><span>All threats mitigated</span></div></div></li>';
+                }
+            } else {
+                alert('No active threats to mitigate.');
+            }
+        });
+
+        // Clear threats list
+        clearThreatsBtn.addEventListener('click', () => {
+            threatList.innerHTML = '<li class="threat-item"><span class="threat-icon">✅</span><div class="threat-content"><div>No active threats detected</div><div class="threat-meta"><span>Just now</span><span>All threats mitigated</span></div></div></li>';
+        });
+
+        function startSimulation() {
+            if (!isCapturing) return;
+
+            // Update packet counts
+            const newPackets = Math.floor(Math.random() * 500) + 100;
+            packetCount += newPackets;
+            
+            // Update traffic volume (in MB)
+            const newTraffic = Math.random() * 10 + 2;
+            trafficMB += newTraffic;
+            
+            // Update traffic history
+            trafficHistoryIn.shift();
+            trafficHistoryOut.shift();
+            trafficHistoryIn.push(Math.floor(Math.random() * 50) + 10);
+            trafficHistoryOut.push(Math.floor(Math.random() * 30) + 5);
+            
+            // Occasionally add threats and attacks
+            if (Math.random() > 0.85 && threatCount < sampleThreats.length) {
+                threatCount++;
+                if (sampleThreats[threatCount - 1].critical) {
+                    activeAttacks++;
+                    document.getElementById('criticalThreatCard').classList.add('critical');
+                }
+                addThreatAlert(sampleThreats[threatCount - 1]);
+            }
+
+            // Update UI
+            document.getElementById('totalPackets').textContent = packetCount.toLocaleString();
+            document.getElementById('totalTraffic').textContent = trafficMB.toFixed(2) + ' MB';
+            document.getElementById('threatCount').textContent = threatCount;
+            document.getElementById('activeAttacks').textContent = activeAttacks;
+            document.getElementById('packetRate').textContent = newPackets;
+            document.getElementById('trafficRate').textContent = newTraffic.toFixed(2);
+            document.getElementById('threatRate').textContent = threatCount > 0 ? '1' : '0';
+            document.getElementById('attackRate').textContent = activeAttacks > 0 ? '1' : '0';
+
+            // Update charts
+            protocolChart.data.datasets[0].data = [
+                Math.floor(packetCount * 0.45), // TCP
+                Math.floor(packetCount * 0.25), // UDP
+                Math.floor(packetCount * 0.05), // ICMP
+                Math.floor(packetCount * 0.15), // HTTP
+                Math.floor(packetCount * 0.08), // HTTPS
+                Math.floor(packetCount * 0.01), // DNS
+                Math.floor(packetCount * 0.01)  // Other
+            ];
+            protocolChart.update();
+
+            portsChart.data.datasets[0].data = [
+                Math.floor(packetCount * 0.15), // HTTP
+                Math.floor(packetCount * 0.25), // HTTPS
+                Math.floor(packetCount * 0.05), // SSH
+                Math.floor(packetCount * 0.1),  // DNS
+                Math.floor(packetCount * 0.03), // RDP
+                Math.floor(packetCount * 0.02), // FTP
+                Math.floor(packetCount * 0.01)  // SMTP
+            ];
+            portsChart.update();
+
+            trafficChart.data.datasets[0].data = trafficHistoryIn;
+            trafficChart.data.datasets[1].data = trafficHistoryOut;
+            trafficChart.update();
+
+            sizeChart.data.datasets[0].data = [
+                Math.floor(packetCount * 0.25), // <100B
+                Math.floor(packetCount * 0.35), // 100-500B
+                Math.floor(packetCount * 0.2),  // 500B-1KB
+                Math.floor(packetCount * 0.15), // 1-5KB
+                Math.floor(packetCount * 0.04), // 5-10KB
+                Math.floor(packetCount * 0.01)  // >10KB
+            ];
+            sizeChart.update();
+
+            attackChart.data.datasets[0].data = [
+                Math.floor(threatCount * 0.3), // DDoS
+                Math.floor(threatCount * 0.25), // Port Scan
+                Math.floor(threatCount * 0.15), // SQL Injection
+                Math.floor(threatCount * 0.1),  // XSS
+                Math.floor(threatCount * 0.1),  // Brute Force
+                Math.floor(threatCount * 0.05), // Malware
+                Math.floor(threatCount * 0.05)  // Phishing
+            ];
+            attackChart.update();
+
+            // Update connections table occasionally
+            if (Math.random() > 0.7) {
+                updateConnectionsTable();
+            }
+
+            // Continue simulation
+            setTimeout(startSimulation, 1000);
+        }
+
+        function addThreatAlert(threat) {
+            const threatItem = document.createElement('li');
+            threatItem.className = `threat-item ${threat.critical ? 'critical' : 'warning'}`;
+            threatItem.innerHTML = `
+                <span class="threat-icon ${threat.critical ? 'critical' : 'warning'}">⚠</span>
+                <div class="threat-content">
+                    <div class="threat-title">${threat.type} from ${threat.source}</div>
+                    <div class="threat-meta">
+                        <span>${threat.time}</span>
+                        <span class="threat-severity ${threat.critical ? 'critical' : 'warning'}">${threat.severity} severity</span>
+                    </div>
+                </div>
+            `;
+            
+            // Add click event to show threat details
+            threatItem.addEventListener('click', () => {
+                alert(`Threat Details:\n\nType: ${threat.type}\nSource: ${threat.source}\nSeverity: ${threat.severity}\nTime: ${threat.time}\n\nDescription: ${threat.description}`);
+            });
+            
+            // Add animation
+            anime({
+                targets: threatItem,
+                translateX: [-50, 0],
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
+
+            threatList.insertBefore(threatItem, threatList.firstChild);
+            
+            // Limit to 10 threats
+            if (threatList.children.length > 10) {
+                threatList.removeChild(threatList.lastChild);
+            }
+            
+            // Pulse animation for new threat
+            const indicator = document.getElementById('threatIndicator');
+            indicator.classList.add('pulse');
+            setTimeout(() => indicator.classList.remove('pulse'), 2000);
+        }
+
+        // Initialize the dashboard
+        updateConnectionsTable();
+    </script>
+</body>
+</html>
