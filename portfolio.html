@@ -18,6 +18,9 @@
             --terminal-bg: rgba(248, 249, 250, 0.95);
             --card-bg: #ffffff;
             --text-color: #212529;
+            --cyber-green: #00ff9d;
+            --cyber-purple: #bd00ff;
+            --cyber-blue: #00b8ff;
         }
         
         * {
@@ -38,21 +41,21 @@
                 radial-gradient(circle at 75% 75%, rgba(131, 56, 236, 0.1) 0%, transparent 50%);
         }
 
-        /* Matrix Rain Background - Light version */
-        #matrix-canvas {
+        /* Cyber Circuit Background */
+        #circuit-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.05;
+            opacity: 0.03;
         }
 
         .content-wrapper {
             position: relative;
-            background-color: rgba(248, 249, 250, 0.95);
-            backdrop-filter: blur(3px);
+            background-color: rgba(248, 249, 250, 0.97);
+            backdrop-filter: blur(2px);
         }
         
         .container {
@@ -64,14 +67,17 @@
         
         /* Header */
         header {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             color: var(--primary);
             padding: 3rem 0;
             text-align: center;
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 0 20px rgba(58, 134, 255, 0.1);
+            box-shadow: 0 0 30px rgba(58, 134, 255, 0.1);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 157, 0.03) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(189, 0, 255, 0.03) 0%, transparent 30%);
         }
         
         header::before {
@@ -81,8 +87,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b') no-repeat center center/cover;
-            opacity: 0.05;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="5" height="5" fill="%233a86ff" fill-opacity="0.1"/></svg>');
+            opacity: 0.3;
             z-index: 0;
         }
         
@@ -96,16 +102,18 @@
             margin-bottom: 0.5rem;
             text-shadow: 0 0 10px rgba(58, 134, 255, 0.3);
             letter-spacing: 3px;
-            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue), var(--cyber-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 8s ease infinite;
+            background-size: 300% 300%;
         }
-        
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px rgba(58, 134, 255, 0.3), 0 0 10px rgba(58, 134, 255, 0.3);
-            }
-            to {
-                text-shadow: 0 0 10px rgba(58, 134, 255, 0.3), 0 0 20px rgba(58, 134, 255, 0.3), 0 0 30px rgba(131, 56, 236, 0.3);
-            }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .tagline {
@@ -114,6 +122,21 @@
             color: var(--secondary);
             text-shadow: 0 0 5px rgba(131, 56, 236, 0.1);
             letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue), var(--cyber-purple));
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+            border-radius: 3px;
         }
         
         .contact-info {
@@ -134,12 +157,14 @@
             border: 1px solid rgba(131, 56, 236, 0.3);
             transition: all 0.3s;
             color: var(--text-color);
+            backdrop-filter: blur(5px);
         }
 
         .contact-item:hover {
             background: rgba(58, 134, 255, 0.2);
             transform: translateY(-3px);
             box-shadow: 0 0 15px rgba(58, 134, 255, 0.2);
+            border-color: var(--cyber-green);
         }
         
         /* Navigation */
@@ -151,6 +176,7 @@
             z-index: 100;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
         }
         
         nav ul {
@@ -176,7 +202,7 @@
         
         nav a:hover {
             color: white;
-            background-color: var(--primary);
+            background: linear-gradient(90deg, var(--cyber-green), var(--primary));
             box-shadow: 0 0 15px rgba(58, 134, 255, 0.3);
         }
 
@@ -200,17 +226,19 @@
             padding: 4rem 0;
             background-color: var(--card-bg);
             margin-bottom: 3rem;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(3px);
         }
 
         section:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--cyber-blue);
         }
 
         section::before {
@@ -231,6 +259,7 @@
             position: relative;
             font-size: 2.2rem;
             letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(58, 134, 255, 0.1);
         }
         
         .section-title::after {
@@ -293,12 +322,13 @@
             border-radius: 10px;
             border: 1px solid rgba(131, 56, 236, 0.1);
             transition: all 0.3s;
+            backdrop-filter: blur(3px);
         }
 
         .skill-category:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(58, 134, 255, 0.1);
-            border-color: var(--primary);
+            border-color: var(--cyber-green);
         }
         
         .skill-category h3 {
@@ -349,7 +379,7 @@
         
         .skill-progress {
             height: 100%;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue));
             border-radius: 4px;
             transition: width 1.5s ease, opacity 0.5s ease;
             position: relative;
@@ -365,17 +395,18 @@
         
         .project-card {
             border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s;
             background: var(--card-bg);
             position: relative;
+            backdrop-filter: blur(3px);
         }
         
         .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(58, 134, 255, 0.2);
-            border-color: var(--primary);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(58, 134, 255, 0.2);
+            border-color: var(--cyber-blue);
         }
 
         .project-card::before {
@@ -408,7 +439,7 @@
 
         .project-card:hover .project-image i {
             transform: scale(1.2);
-            color: var(--primary);
+            color: var(--cyber-green);
         }
 
         .project-image::after {
@@ -425,6 +456,33 @@
 
         .project-card:hover .project-image::after {
             opacity: 1;
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                transparent 48%, 
+                var(--cyber-green) 49%, 
+                var(--cyber-blue) 51%, 
+                transparent 52%);
+            background-size: 10px 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover .project-image::before {
+            opacity: 0.1;
+            animation: gridMove 2s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 10px 10px; }
         }
         
         .project-content {
@@ -462,9 +520,10 @@
         }
 
         .tech-tag:hover {
-            background-color: var(--primary);
+            background-color: var(--cyber-blue);
             color: white;
             transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 184, 255, 0.2);
         }
         
         .project-links {
@@ -488,7 +547,7 @@
 
         .project-link:hover {
             color: white;
-            background-color: var(--primary);
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue));
             box-shadow: 0 0 15px rgba(58, 134, 255, 0.3);
             transform: translateY(-3px);
         }
@@ -504,7 +563,7 @@
             width: 100%;
             height: 500px;
             margin-bottom: 3rem;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(131, 56, 236, 0.2);
             box-shadow: 0 0 30px rgba(58, 134, 255, 0.1);
@@ -564,10 +623,11 @@
             position: relative;
             border: 1px solid rgba(131, 56, 236, 0.1);
             transition: all 0.3s;
+            backdrop-filter: blur(3px);
         }
 
         .timeline-content:hover {
-            border-color: var(--primary);
+            border-color: var(--cyber-green);
             box-shadow: 0 5px 20px rgba(58, 134, 255, 0.1);
             transform: translateY(-5px);
         }
@@ -577,11 +637,11 @@
             position: absolute;
             width: 25px;
             height: 25px;
-            background: var(--primary);
+            background: var(--cyber-blue);
             border-radius: 50%;
             top: 30px;
             z-index: 1;
-            box-shadow: 0 0 10px rgba(58, 134, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 184, 255, 0.3);
         }
 
         .timeline-item:nth-child(odd) .timeline-content::before {
@@ -623,7 +683,7 @@
             width: 100%;
             height: 500px;
             margin-bottom: 3rem;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(131, 56, 236, 0.2);
             box-shadow: 0 0 30px rgba(58, 134, 255, 0.1);
@@ -645,9 +705,10 @@
             left: 50px;
             right: 50px;
             height: 3px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue), var(--cyber-purple));
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
             z-index: 0;
-            animation: lineGlow 2s infinite alternate;
         }
 
         .education-step {
@@ -670,18 +731,18 @@
         .education-dot {
             width: 25px;
             height: 25px;
-            background-color: var(--primary);
+            background: var(--cyber-blue);
             border-radius: 50%;
             margin-bottom: 1.5rem;
             position: relative;
-            box-shadow: 0 0 15px rgba(58, 134, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 184, 255, 0.3);
             transition: all 0.3s;
         }
 
         .education-step:hover .education-dot {
             transform: scale(1.3);
-            background-color: var(--accent);
-            box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
+            background: var(--cyber-green);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
         }
 
         .education-dot::after {
@@ -689,7 +750,7 @@
             position: absolute;
             width: 45px;
             height: 45px;
-            background-color: rgba(58, 134, 255, 0.1);
+            background-color: rgba(0, 184, 255, 0.1);
             border-radius: 50%;
             top: -10px;
             left: -10px;
@@ -706,10 +767,11 @@
             width: 100%;
             border: 1px solid rgba(131, 56, 236, 0.1);
             transition: all 0.3s;
+            backdrop-filter: blur(3px);
         }
 
         .education-step:hover .education-info {
-            border-color: var(--primary);
+            border-color: var(--cyber-blue);
             box-shadow: 0 5px 20px rgba(58, 134, 255, 0.1);
             transform: translateY(-5px);
         }
@@ -756,7 +818,7 @@
         
         .cert-card {
             border: 1px solid rgba(131, 56, 236, 0.2);
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 0;
             transition: all 0.3s;
             background: var(--card-bg);
@@ -768,6 +830,7 @@
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.5s ease;
+            backdrop-filter: blur(3px);
         }
 
         .cert-card.visible {
@@ -778,7 +841,7 @@
         .cert-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 15px 30px rgba(58, 134, 255, 0.1);
-            border-color: var(--primary);
+            border-color: var(--cyber-blue);
         }
 
         .cert-3d-container {
@@ -820,7 +883,7 @@
         }
 
         .cert-3d-back {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            background: linear-gradient(135deg, var(--cyber-green), var(--cyber-blue));
             color: white;
             transform: rotateY(180deg);
             padding: 2rem;
@@ -833,19 +896,19 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            background: linear-gradient(135deg, var(--cyber-green), var(--cyber-blue));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 2.5rem;
-            box-shadow: 0 0 20px rgba(58, 134, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 184, 255, 0.2);
             transition: all 0.3s;
         }
 
         .cert-card:hover .cert-badge {
             transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(58, 134, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 184, 255, 0.3);
         }
 
         .cert-org-front {
@@ -887,9 +950,10 @@
         .contact-form {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
             border: 1px solid rgba(131, 56, 236, 0.1);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(3px);
         }
 
         .form-group {
@@ -920,13 +984,13 @@
         .contact-form input:focus,
         .contact-form textarea:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(58, 134, 255, 0.1);
+            border-color: var(--cyber-blue);
+            box-shadow: 0 0 10px rgba(0, 184, 255, 0.1);
             background: rgba(58, 134, 255, 0.05);
         }
         
         .contact-form button {
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue));
             color: white;
             border: none;
             padding: 12px 30px;
@@ -937,14 +1001,14 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             font-size: 0.9rem;
-            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 184, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
         
         .contact-form button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(58, 134, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 184, 255, 0.3);
         }
 
         .contact-form button::before {
@@ -973,17 +1037,18 @@
             align-items: center;
             gap: 15px;
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 15px;
             transition: all 0.3s;
             background: var(--card-bg);
             border: 1px solid rgba(131, 56, 236, 0.1);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(3px);
         }
 
         .contact-item:hover {
             background: rgba(58, 134, 255, 0.05);
             transform: translateY(-5px);
-            border-color: var(--primary);
+            border-color: var(--cyber-blue);
             box-shadow: 0 8px 20px rgba(58, 134, 255, 0.1);
         }
 
@@ -1004,7 +1069,7 @@
         }
 
         .contact-item a:hover {
-            color: var(--secondary);
+            color: var(--cyber-green);
             text-decoration: underline;
         }
         
@@ -1017,6 +1082,7 @@
             margin-top: 3rem;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(3px);
         }
         
         .social-links {
@@ -1045,9 +1111,9 @@
         
         .social-link:hover {
             color: white;
-            background: var(--primary);
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-blue));
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 184, 255, 0.3);
         }
 
         .social-link::before {
@@ -1085,14 +1151,15 @@
             width: 350px;
             height: 250px;
             background: var(--terminal-bg);
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--primary);
+            border: 1px solid var(--cyber-blue);
             overflow: hidden;
             z-index: 100;
             transform: translateY(100%);
             opacity: 0;
             transition: all 0.5s ease;
+            backdrop-filter: blur(3px);
         }
 
         .terminal-window.active {
@@ -1172,6 +1239,17 @@
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
+        }
+
+        /* Cyber Circuit Animation */
+        .circuit-node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--cyber-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--cyber-blue);
+            z-index: -1;
         }
 
         /* Advanced Animations */
@@ -1286,8 +1364,8 @@
     </style>
 </head>
 <body>
-    <!-- Matrix Rain Background - Light version -->
-    <canvas id="matrix-canvas"></canvas>
+    <!-- Cyber Circuit Background -->
+    <canvas id="circuit-canvas"></canvas>
 
     <!-- Content Wrapper -->
     <div class="content-wrapper">
@@ -1457,7 +1535,132 @@
             <section id="projects">
                 <h2 class="section-title">PROJECTS</h2>
                 <div class="projects-grid">
-                    <!-- Project 1 - Weather App -->
+                    <!-- Project 1 - Password Strength Checker -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-lock" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">PASSWORD STRENGTH CHECKER</h3>
+                            <p class="project-desc">A security tool that evaluates password strength in real-time using advanced algorithms. Features include entropy calculation, common password detection, and visual feedback.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">Security</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                                <a href="#" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 2 - Tic Tac Toe Game -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-gamepad" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">TIC TAC TOE GAME</h3>
+                            <p class="project-desc">A classic Tic Tac Toe game with AI opponent featuring multiple difficulty levels. Includes score tracking, responsive design, and smooth animations.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">AI</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                                <a href="#" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 3 - Chess Game -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-chess" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">CHESS GAME</h3>
+                            <p class="project-desc">A fully functional chess game with move validation, check detection, and game state tracking. Features include undo functionality and move highlighting.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">Game Logic</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                                <a href="#" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 4 - Guess the Number Game -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-question" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">GUESS THE NUMBER GAME</h3>
+                            <p class="project-desc">An interactive number guessing game with difficulty levels and score tracking. Features include hints, limited attempts, and responsive design.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">Game Design</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                                <a href="#" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 5 - TECH BUDDY -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-heartbeat" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">TECH BUDDY - HEALTHCARE DIAGNOSTICS</h3>
+                            <p class="project-desc">An accessible healthcare diagnostics platform that helps users understand potential health issues based on symptoms. Includes secure data handling.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">Security</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                                <a href="#" class="project-link">
+                                    <i class="fas fa-external-link-alt"></i> Live Demo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 6 - Weather App -->
                     <div class="project-card">
                         <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
                             <i class="fas fa-cloud-sun" style="font-size: 4rem; color: var(--primary);"></i>
@@ -1482,7 +1685,7 @@
                         </div>
                     </div>
                     
-                    <!-- Project 2 - To-Do List -->
+                    <!-- Project 7 - To-Do List -->
                     <div class="project-card">
                         <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
                             <i class="fas fa-tasks" style="font-size: 4rem; color: var(--primary);"></i>
@@ -1507,7 +1710,7 @@
                         </div>
                     </div>
                     
-                    <!-- Project 3 - Portfolio Website -->
+                    <!-- Project 8 - Portfolio Website -->
                     <div class="project-card">
                         <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
                             <i class="fas fa-user-tie" style="font-size: 4rem; color: var(--primary);"></i>
@@ -1532,13 +1735,13 @@
                         </div>
                     </div>
                     
-                    <!-- Project 4 - E-Commerce -->
+                    <!-- Project 9 - E-Commerce -->
                     <div class="project-card">
                         <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
                             <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--primary);"></i>
                         </div>
                         <div class="project-content">
-                            <h3 class="project-title">E-COMMERCE WEBSITE</h3>
+                            <h3 class="project-title">E-COMMERCE WEBSITE – EASYSHOP</h3>
                             <p class="project-desc">A full-featured e-commerce platform with product listings, shopping cart functionality, and checkout process. Implemented with responsive design principles.</p>
                             <div class="project-tech">
                                 <span class="tech-tag">HTML5</span>
@@ -1557,7 +1760,7 @@
                         </div>
                     </div>
                     
-                    <!-- Project 5 - AI Firewall -->
+                    <!-- Project 10 - AI Firewall -->
                     <div class="project-card">
                         <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
                             <i class="fas fa-shield-alt" style="font-size: 4rem; color: var(--primary);"></i>
@@ -1570,6 +1773,28 @@
                                 <span class="tech-tag">Machine Learning</span>
                                 <span class="tech-tag">Network Security</span>
                                 <span class="tech-tag">Flask</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">
+                                    <i class="fab fa-github"></i> View Code
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 11 - KYC System -->
+                    <div class="project-card">
+                        <div class="project-image" style="background-color: rgba(131, 56, 236, 0.05);">
+                            <i class="fas fa-id-card" style="font-size: 4rem; color: var(--primary);"></i>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">KYC (KNOW YOUR CUSTOMER) SYSTEM</h3>
+                            <p class="project-desc">A secure identity verification system with document upload, facial recognition, and data validation features. Currently in development with focus on security and privacy.</p>
+                            <div class="project-tech">
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">Security</span>
                             </div>
                             <div class="project-links">
                                 <a href="#" class="project-link">
@@ -1911,49 +2136,74 @@
     </div>
 
     <script>
-        // Matrix Rain Background - Light version
-        const matrixCanvas = document.getElementById('matrix-canvas');
-        const matrixCtx = matrixCanvas.getContext('2d');
+        // Cyber Circuit Background
+        const circuitCanvas = document.getElementById('circuit-canvas');
+        const circuitCtx = circuitCanvas.getContext('2d');
         
-        matrixCanvas.width = window.innerWidth;
-        matrixCanvas.height = window.innerHeight;
+        circuitCanvas.width = window.innerWidth;
+        circuitCanvas.height = window.innerHeight;
         
-        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const nums = '0123456789';
-        const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+        // Create nodes for the circuit board effect
+        const nodes = [];
+        const nodeCount = 50;
+        const maxDistance = 250;
         
-        const alphabet = katakana + latin + nums + symbols;
-        
-        const fontSize = 16;
-        const columns = matrixCanvas.width / fontSize;
-        
-        const rainDrops = [];
-        
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
+        // Initialize nodes
+        for (let i = 0; i < nodeCount; i++) {
+            nodes.push({
+                x: Math.random() * circuitCanvas.width,
+                y: Math.random() * circuitCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
         }
         
-        const drawMatrix = () => {
-            matrixCtx.fillStyle = 'rgba(248, 249, 250, 0.05)';
-            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        // Draw circuit board effect
+        function drawCircuit() {
+            circuitCtx.clearRect(0, 0, circuitCanvas.width, circuitCanvas.height);
             
-            matrixCtx.fillStyle = '#3a86ff';
-            matrixCtx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                matrixCtx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+            // Update node positions
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
                 
-                if (rainDrops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
+                // Move nodes
+                node.x += node.vx;
+                node.y += node.vy;
+                
+                // Bounce off edges
+                if (node.x < 0 || node.x > circuitCanvas.width) node.vx *= -1;
+                if (node.y < 0 || node.y > circuitCanvas.height) node.vy *= -1;
+                
+                // Draw nodes
+                circuitCtx.beginPath();
+                circuitCtx.arc(node.x, node.y, 2, 0, Math.PI * 2);
+                circuitCtx.fillStyle = 'rgba(58, 134, 255, 0.5)';
+                circuitCtx.fill();
+                
+                // Draw connections to nearby nodes
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const otherNode = nodes[j];
+                    const dx = otherNode.x - node.x;
+                    const dy = otherNode.y - node.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < maxDistance) {
+                        const opacity = 1 - distance / maxDistance;
+                        circuitCtx.beginPath();
+                        circuitCtx.moveTo(node.x, node.y);
+                        circuitCtx.lineTo(otherNode.x, otherNode.y);
+                        circuitCtx.strokeStyle = `rgba(58, 134, 255, ${opacity * 0.2})`;
+                        circuitCtx.lineWidth = 1;
+                        circuitCtx.stroke();
+                    }
                 }
-                rainDrops[i]++;
             }
-        };
+            
+            requestAnimationFrame(drawCircuit);
+        }
         
-        setInterval(drawMatrix, 30);
-
+        drawCircuit();
+        
         // Terminal Animation
         const terminalBody = document.getElementById('terminal-body');
         const terminalWindow = document.querySelector('.terminal-window');
@@ -1974,10 +2224,19 @@
             { text: "Database: MongoDB | MySQL", delay: 800 },
             { text: "Security: Penetration Testing | Secure Coding", delay: 800 },
             { text: "> ", prompt: true, delay: 200 },
-            { text: "contact --methods", delay: 300 },
-            { text: "Email: neerajupadhayay347@gmail.com", delay: 500 },
-            { text: "Phone: +91 6200592390", delay: 500 },
-            { text: "GitHub: github.com/Neeraj29118", delay: 500 },
+            { text: "projects --count", delay: 300 },
+            { text: "11 projects found:", delay: 500 },
+            { text: "1. Password Strength Checker", delay: 100 },
+            { text: "2. Tic Tac Toe Game", delay: 100 },
+            { text: "3. Chess Game", delay: 100 },
+            { text: "4. Guess the Number Game", delay: 100 },
+            { text: "5. TECH BUDDY (Healthcare)", delay: 100 },
+            { text: "6. Weather App", delay: 100 },
+            { text: "7. To-Do List App", delay: 100 },
+            { text: "8. Portfolio Website", delay: 100 },
+            { text: "9. E-commerce Website", delay: 100 },
+            { text: "10. AI-Powered Firewall", delay: 100 },
+            { text: "11. KYC System (In Progress)", delay: 100 },
             { text: "> ", prompt: true, delay: 200, loop: true }
         ];
         
@@ -2230,9 +2489,9 @@
         
         // Handle window resize
         window.addEventListener('resize', () => {
-            // Matrix background
-            matrixCanvas.width = window.innerWidth;
-            matrixCanvas.height = window.innerHeight;
+            // Circuit background
+            circuitCanvas.width = window.innerWidth;
+            circuitCanvas.height = window.innerHeight;
             
             // Experience visualization
             experienceCamera.aspect = document.getElementById('experience-3d').offsetWidth / 500;

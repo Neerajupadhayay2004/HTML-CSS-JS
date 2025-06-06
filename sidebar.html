@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neeraj's Dashboard</title>
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --active-item: rgba(59, 130, 246, 0.15);
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --hover-color: rgba(59, 130, 246, 0.08);
+            --section-color: rgba(59, 130, 246, 0.5);
+            --transition-speed: 0.35s;
+            --sidebar-width: 280px;
+            --collapsed-width: 85px;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f8fafc;
+            transition: margin-left var(--transition-speed);
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-bg);
+            color: var(--text-color);
+            height: 100vh;
+            position: fixed;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 15px var(--shadow-color);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar.collapsed {
+            width: var(--collapsed-width);
+        }
+
+        /* Header Section */
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 90px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            transition: all var(--transition-speed);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #1d4ed8 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed);
+            color: var(--text-color);
+            background: linear-gradient(to right, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1.5px solid var(--accent-color);
+            color: var(--accent-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed);
+            position: absolute;
+            right: -16px;
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateX(3px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Menu Section */
+        .sidebar-menu {
+            padding: 24px 0;
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .menu-section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            padding: 0 24px 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--section-color);
+            transition: all var(--transition-speed);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 24px;
+            width: 24px;
+            height: 2px;
+            background: var(--accent-color);
+            transition: all var(--transition-speed);
+        }
+
+        .sidebar.collapsed .section-title {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Enhanced Menu Items */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            margin: 4px 0;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .menu-item:hover {
+            background: var(--hover-color);
+        }
+
+        .menu-item:hover .menu-icon {
+            transform: translateX(3px);
+        }
+
+        .menu-item.active {
+            background: var(--active-item);
+        }
+
+        .menu-item.active .menu-icon {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent-color);
+        }
+
+        .menu-icon {
+            margin-right: 16px;
+            font-size: 1.1rem;
+            min-width: 24px;
+            text-align: center;
+            transition: all var(--transition-speed);
+            color: var(--text-color);
+        }
+
+        .sidebar.collapsed .menu-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .menu-text {
+            transition: opacity var(--transition-speed);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 22px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
+        }
+
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+
+        /* Footer Section */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            transition: all var(--transition-speed);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #1d4ed8 100%);
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .user-info {
+            transition: opacity var(--transition-speed);
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .user-info {
+            opacity: 0;
+            width: 0;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            flex: 1;
+            transition: margin-left var(--transition-speed);
+            background: #f8fafc;
+        }
+
+        .main-content.expanded {
+            margin-left: var(--collapsed-width);
+        }
+
+        /* Content Header */
+        .content-header {
+            margin-bottom: 40px;
+            max-width: 1000px;
+        }
+
+        .content-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .content-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .content-header h1:hover::after {
+            width: 90px;
+        }
+
+        .content-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .card:hover::before {
+            width: 6px;
+        }
+
+        .card h3 {
+            color: #0f172a;
+            margin-bottom: 18px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .card h3 i {
+            margin-right: 12px;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .card .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .card .card-footer i {
+            color: var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-footer i {
+            transform: translateX(3px);
+        }
+
+        /* Tooltip Styling */
+        .menu-item .tooltip {
+            position: absolute;
+            left: calc(var(--collapsed-width) + 14px);
+            background: var(--primary-bg);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px var(--shadow-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease 0.3s;
+            z-index: 1000;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .sidebar.collapsed .menu-item:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Dropdown Styling */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            padding-left: 20px;
+            overflow: hidden;
+            transition: all var(--transition-speed);
+        }
+
+        .dropdown-content .menu-item {
+            padding: 10px 24px;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .dropdown-arrow {
+            margin-left: auto;
+            transition: transform var(--transition-speed);
+        }
+
+        .dropdown.active .dropdown-arrow {
+            transform: rotate(90deg);
+        }
+
+        /* Scrollbar Styling */
+        .sidebar-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1001;
+            }
+            
+            .sidebar.collapsed {
+                transform: translateX(0);
+                width: 80px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 30px;
+            }
+            
+            .content-header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Header -->
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">NU</div>
+                <span class="logo-text">Neeraj</span>
+            </div>
+            <button class="toggle-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <!-- Menu -->
+        <div class="sidebar-menu">
+            <!-- Navigation Section -->
+            <div class="menu-section">
+                <div class="section-title">Navigation</div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-home menu-icon"></i>
+                        <span class="menu-text">Home</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">Home Dashboard</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-tachometer-alt menu-icon"></i>
+                            <span class="menu-text">Dashboard</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-chart-bar menu-icon"></i>
+                            <span class="menu-text">Overview</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-list-alt menu-icon"></i>
+                            <span class="menu-text">Activities</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown active">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-box-open menu-icon"></i>
+                        <span class="menu-text">Products</span>
+                        <span class="menu-badge">New</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">Product Management</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item active">
+                            <i class="fas fa-list menu-icon"></i>
+                            <span class="menu-text">Product List</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-tags menu-icon"></i>
+                            <span class="menu-text">Categories</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-warehouse menu-icon"></i>
+                            <span class="menu-text">Inventory</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-chart-line menu-icon"></i>
+                        <span class="menu-text">Analytics</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">View Analytics</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-shopping-cart menu-icon"></i>
+                            <span class="menu-text">Sales</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-users menu-icon"></i>
+                            <span class="menu-text">Traffic</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-file-alt menu-icon"></i>
+                            <span class="menu-text">Reports</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Section -->
+            <div class="menu-section">
+                <div class="section-title">Content</div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-cloud-upload-alt menu-icon"></i>
+                        <span class="menu-text">Uploads</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">File Upload Center</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-images menu-icon"></i>
+                            <span class="menu-text">Media</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-file-pdf menu-icon"></i>
+                            <span class="menu-text">Documents</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-file-archive menu-icon"></i>
+                            <span class="menu-text">Bulk Upload</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-book menu-icon"></i>
+                        <span class="menu-text">Documentation</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">Technical Docs</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-code menu-icon"></i>
+                            <span class="menu-text">API Docs</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-book-open menu-icon"></i>
+                            <span class="menu-text">User Guides</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-graduation-cap menu-icon"></i>
+                            <span class="menu-text">Tutorials</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Administration Section -->
+            <div class="menu-section">
+                <div class="section-title">Administration</div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-users menu-icon"></i>
+                        <span class="menu-text">Users</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">User Management</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-list menu-icon"></i>
+                            <span class="menu-text">User List</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-user-tag menu-icon"></i>
+                            <span class="menu-text">Roles</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-user-shield menu-icon"></i>
+                            <span class="menu-text">Permissions</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle">
+                        <i class="fas fa-cog menu-icon"></i>
+                        <span class="menu-text">Settings</span>
+                        <i class="fas fa-chevron-right dropdown-arrow"></i>
+                        <span class="tooltip">System Settings</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div class="menu-item">
+                            <i class="fas fa-sliders-h menu-icon"></i>
+                            <span class="menu-text">General</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-lock menu-icon"></i>
+                            <span class="menu-text">Security</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-bell menu-icon"></i>
+                            <span class="menu-text">Notifications</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <div class="user-avatar">NU</div>
+            <div class="user-info">
+                <div class="user-name">Neeraj Upadhyay</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header">
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back, Neeraj! Here's what's happening with your system today.</p>
+        </div>
+        
+        <div class="card-grid">
+            <div class="card fade-in delay-1">
+                <h3><i class="fas fa-tachometer-alt"></i> System Status</h3>
+                <p>All systems operational with no critical issues detected in the last 24 hours.</p>
+                <div class="card-footer">
+                    <span>Last checked: Just now</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="card fade-in delay-2">
+                <h3><i class="fas fa-chart-pie"></i> Performance Metrics</h3>
+                <p>System performance is at 98.7% with 2.3K transactions processed today.</p>
+                <div class="card-footer">
+                    <span>Updated hourly</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="card fade-in delay-3">
+                <h3><i class="fas fa-users"></i> User Management</h3>
+                <p>15 active users, 3 new registrations this week. 2 pending approvals.</p>
+                <div class="card-footer">
+                    <span>View all users</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="card fade-in delay-4">
+                <h3><i class="fas fa-bell"></i> Notifications</h3>
+                <p>You have 3 new notifications and 2 pending tasks requiring approval.</p>
+                <div class="card-footer">
+                    <span>View all alerts</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Toggle Functionality
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            // Animate toggle icon
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-chevron-left');
+            icon.classList.toggle('fa-chevron-right');
+            
+            // Add bounce animation
+            this.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 300);
+        });
+
+        // Advanced Menu Interactions
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Don't process clicks if it's a dropdown toggle
+                if (this.classList.contains('dropdown-toggle')) return;
+                
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                // Position ripple at click location
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // Set active state
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Dropdown functionality
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                // Prevent event from bubbling up to parent menu-item
+                e.stopPropagation();
+                
+                const dropdown = this.parentElement;
+                dropdown.classList.toggle('active');
+                
+                // Close other dropdowns when opening a new one
+                if (dropdown.classList.contains('active')) {
+                    document.querySelectorAll('.dropdown').forEach(d => {
+                        if (d !== dropdown) d.classList.remove('active');
+                    });
+                }
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+
+        // Initialize with animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate sidebar entrance
+            sidebar.style.transform = 'translateX(0)';
+            sidebar.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

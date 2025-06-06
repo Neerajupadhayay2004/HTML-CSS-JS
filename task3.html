@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Counter</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --disabled-color: #95a5a6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark-color);
+        }
+        
+        .counter-app {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .counter-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        h1 {
+            font-weight: 300;
+            font-size: 1.8rem;
+        }
+        
+        .counter-body {
+            padding: 2rem;
+        }
+        
+        .counter-display {
+            font-size: 5rem;
+            font-weight: 300;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+        }
+        
+        .counter-display.positive {
+            color: var(--secondary-color);
+        }
+        
+        .counter-display.negative {
+            color: var(--danger-color);
+        }
+        
+        .counter-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        button {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-increment {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-increment:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-decrement {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-decrement:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-reset {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: var(--disabled-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .counter-settings {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .setting-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .history {
+            margin-top: 2rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .history-list {
+            list-style-type: none;
+        }
+        
+        .history-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-timestamp {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 600px) {
+            .counter-app {
+                margin: 1rem;
+            }
+            
+            .counter-display {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-app">
+        <div class="counter-header">
+            <h1>Advanced Counter</h1>
+        </div>
+        <div class="counter-body">
+            <div class="counter-display" id="counter">0</div>
+            
+            <div class="counter-controls">
+                <button class="btn-decrement" id="decrement">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                    </svg>
+                    Decrement
+                </button>
+                <button class="btn-reset" id="reset">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    </svg>
+                    Reset
+                </button>
+                <button class="btn-increment" id="increment">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Increment
+                </button>
+            </div>
+            
+            <div class="counter-settings">
+                <div class="setting-group">
+                    <label for="step">Step Value:</label>
+                    <input type="number" id="step" min="1" value="1">
+                </div>
+                
+                <div class="setting-group">
+                    <label for="max-value">Maximum Value (optional):</label>
+                    <input type="number" id="max-value" min="0" placeholder="No limit">
+                </div>
+                
+                <div class="setting-group">
+                    <label for="min-value">Minimum Value:</label>
+                    <input type="number" id="min-value" min="0" value="0">
+                </div>
+            </div>
+            
+            <div class="history">
+                <h3>History</h3>
+                <ul class="history-list" id="history-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const counterDisplay = document.getElementById('counter');
+            const incrementBtn = document.getElementById('increment');
+            const decrementBtn = document.getElementById('decrement');
+            const resetBtn = document.getElementById('reset');
+            const stepInput = document.getElementById('step');
+            const maxValueInput = document.getElementById('max-value');
+            const minValueInput = document.getElementById('min-value');
+            const historyList = document.getElementById('history-list');
+            
+            // Counter state
+            let count = 0;
+            let step = parseInt(stepInput.value) || 1;
+            let maxValue = null;
+            let minValue = parseInt(minValueInput.value) || 0;
+            
+            // Update the counter display
+            function updateDisplay() {
+                counterDisplay.textContent = count;
+                
+                // Update display color based on value
+                counterDisplay.classList.remove('positive', 'negative');
+                if (count > 0) {
+                    counterDisplay.classList.add('positive');
+                } else if (count < 0) {
+                    counterDisplay.classList.add('negative');
+                }
+                
+                // Update button states
+                decrementBtn.disabled = count <= minValue;
+                incrementBtn.disabled = maxValue !== null && count >= maxValue;
+            }
+            
+            // Add history entry
+            function addHistoryEntry(action) {
+                const now = new Date();
+                const timestamp = now.toLocaleTimeString();
+                
+                const listItem = document.createElement('li');
+                listItem.className = 'history-item';
+                listItem.innerHTML = `
+                    <span>${action}: ${count}</span>
+                    <span class="history-timestamp">${timestamp}</span>
+                `;
+                
+                // Add to top of history
+                if (historyList.firstChild) {
+                    historyList.insertBefore(listItem, historyList.firstChild);
+                } else {
+                    historyList.appendChild(listItem);
+                }
+                
+                // Limit history to 50 items
+                if (historyList.children.length > 50) {
+                    historyList.removeChild(historyList.lastChild);
+                }
+            }
+            
+            // Increment counter
+            incrementBtn.addEventListener('click', () => {
+                const newValue = count + step;
+                
+                if (maxValue === null || newValue <= maxValue) {
+                    count = newValue;
+                    updateDisplay();
+                    addHistoryEntry('Incremented');
+                }
+            });
+            
+            // Decrement counter
+            decrementBtn.addEventListener('click', () => {
+                const newValue = count - step;
+                
+                if (newValue >= minValue) {
+                    count = newValue;
+                    updateDisplay();
+                    addHistoryEntry('Decremented');
+                }
+            });
+            
+            // Reset counter
+            resetBtn.addEventListener('click', () => {
+                count = 0;
+                updateDisplay();
+                addHistoryEntry('Reset');
+            });
+            
+            // Update step value
+            stepInput.addEventListener('change', () => {
+                step = parseInt(stepInput.value) || 1;
+                if (step < 1) {
+                    step = 1;
+                    stepInput.value = 1;
+                }
+            });
+            
+            // Update max value
+            maxValueInput.addEventListener('change', () => {
+                maxValue = maxValueInput.value ? parseInt(maxValueInput.value) : null;
+                updateDisplay();
+            });
+            
+            // Update min value
+            minValueInput.addEventListener('change', () => {
+                minValue = parseInt(minValueInput.value) || 0;
+                updateDisplay();
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowUp' || e.key === '+') {
+                    incrementBtn.click();
+                    incrementBtn.focus();
+                } else if (e.key === 'ArrowDown' || e.key === '-') {
+                    decrementBtn.click();
+                    decrementBtn.focus();
+                } else if (e.key === 'r' || e.key === '0') {
+                    resetBtn.click();
+                    resetBtn.focus();
+                }
+            });
+            
+            // Initialize display
+            updateDisplay();
+            addHistoryEntry('Started');
+        });
+    </script>
+</body>
+</html>

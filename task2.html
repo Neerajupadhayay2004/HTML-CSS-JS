@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Interactive Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #9d4edd;
+            --primary-dark: #7b2cbf;
+            --secondary: #03dac6;
+            --error: #ff3860;
+            --success: #09c372;
+            --text: #f8f9fa;
+            --bg-dark: #121212;
+            --bg-darker: #0a0a0a;
+            --bg-gradient: linear-gradient(135deg, #1a0633, #0d021a);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient);
+            color: var(--text);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Cosmic Background Animation */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 5s) infinite ease-in-out;
+            opacity: var(--opacity, 0.8);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            animation: float var(--duration, 60s) infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(100px, 0) rotate(180deg); }
+            75% { transform: translate(50px, -50px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        /* Form Container */
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            background: rgba(18, 18, 18, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: fadeIn 0.8s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Form Header */
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .form-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 3px;
+        }
+
+        .form-header p {
+            color: rgba(248, 249, 250, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            background: rgba(30, 30, 30, 0.7);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 8px;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+            background: rgba(40, 40, 40, 0.7);
+        }
+
+        .form-input.error {
+            border-color: var(--error);
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .form-input.valid {
+            border-color: var(--success);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+            animation: fadeInUp 0.3s ease-out both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Password Strength Meter */
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(138, 43, 226, 0.1);
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: all 0.5s ease;
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+
+        /* Password Requirements */
+        .requirements-list {
+            margin-top: 0.5rem;
+            padding-left: 1.2rem;
+            font-size: 0.8rem;
+            color: rgba(248, 249, 250, 0.6);
+            display: none;
+        }
+
+        .requirements-list li {
+            margin-bottom: 0.3rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .requirements-list li::before {
+            content: '•';
+            position: absolute;
+            left: -1rem;
+            color: rgba(138, 43, 226, 0.5);
+        }
+
+        .requirements-list li.valid {
+            color: var(--success);
+        }
+
+        .requirements-list li.valid::before {
+            content: '✓';
+            color: var(--success);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+            animation: fadeIn 0.5s ease-out both;
+            animation-delay: 0.6s;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(135deg, #4a3468, #5d3d8a);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: all 0.6s;
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(9, 195, 114, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(9, 195, 114, 0.3);
+            margin-top: 1.5rem;
+            display: none;
+            animation: fadeIn 0.5s ease-out both;
+        }
+
+        .success-message h3 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-message svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.5rem;
+            stroke: var(--success);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            animation: checkmark 0.6s ease-in-out 0.3s forwards;
+        }
+
+        @keyframes checkmark {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Floating Label Effect */
+        .floating-label {
+            position: absolute;
+            left: 1rem;
+            top: 0.8rem;
+            color: rgba(248, 249, 250, 0.6);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: rgba(18, 18, 18, 0.8);
+            padding: 0 0.3rem;
+        }
+
+        .form-input:focus + .floating-label,
+        .form-input:not(:placeholder-shown) + .floating-label {
+            top: -0.6rem;
+            font-size: 0.7rem;
+            color: var(--primary);
+            background: var(--bg-dark);
+        }
+
+        /* Input Icons */
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .input-icon:hover {
+            color: var(--primary);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            right: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: help;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background: var(--bg-dark);
+            color: var(--text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg" id="cosmicBg"></div>
+    
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Create Account</h1>
+            <p>Join our community today</p>
+        </div>
+        
+        <form id="registrationForm">
+            <div class="form-group">
+                <input type="text" id="name" class="form-input" placeholder=" ">
+                <label for="name" class="floating-label">Full Name</label>
+                <div class="error-message" id="nameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="email" class="form-input" placeholder=" ">
+                <label for="email" class="floating-label">Email Address</label>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <input type="tel" id="phone" class="form-input" placeholder=" ">
+                <label for="phone" class="floating-label">Phone Number</label>
+                <div class="error-message" id="phoneError"></div>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="password" class="form-input" placeholder=" ">
+                <label for="password" class="floating-label">Password</label>
+                <div class="password-strength">
+                    <div class="strength-meter" id="strengthMeter"></div>
+                </div>
+                <div class="strength-text" id="strengthText">Password strength</div>
+                <div class="error-message" id="passwordError"></div>
+                <ul class="requirements-list" id="passwordRequirements">
+                    <li data-rule="length">At least 8 characters</li>
+                    <li data-rule="uppercase">At least 1 uppercase letter</li>
+                    <li data-rule="lowercase">At least 1 lowercase letter</li>
+                    <li data-rule="number">At least 1 number</li>
+                    <li data-rule="special">At least 1 special character</li>
+                </ul>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="confirmPassword" class="form-input" placeholder=" ">
+                <label for="confirmPassword" class="floating-label">Confirm Password</label>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                <span id="buttonText">Sign Up</span>
+            </button>
+        </form>
+        
+        <div class="success-message" id="successMessage">
+            <h3>
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 13l4 4L19 7" />
+                </svg>
+                Registration Successful!
+            </h3>
+            <p>Welcome to our community! Check your email for verification.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create cosmic background
+            createCosmicBackground();
+            
+            // Get form elements
+            const form = document.getElementById('registrationForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            const strengthMeter = document.getElementById('strengthMeter');
+            const strengthText = document.getElementById('strengthText');
+            const passwordRequirements = document.getElementById('passwordRequirements');
+            
+            // Error message elements
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const phoneError = document.getElementById('phoneError');
+            const passwordError = document.getElementById('passwordError');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            
+            // Validation flags
+            let isNameValid = false;
+            let isEmailValid = false;
+            let isPhoneValid = false;
+            let isPasswordValid = false;
+            let isConfirmPasswordValid = false;
+            
+            // Regular expressions for validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+            const upperCaseRegex = /[A-Z]/;
+            const lowerCaseRegex = /[a-z]/;
+            const numberRegex = /[0-9]/;
+            const specialCharRegex = /[^A-Za-z0-9]/;
+            
+            // Event listeners for input validation
+            nameInput.addEventListener('input', validateName);
+            nameInput.addEventListener('blur', validateName);
+            
+            emailInput.addEventListener('input', validateEmail);
+            emailInput.addEventListener('blur', validateEmail);
+            
+            phoneInput.addEventListener('input', validatePhone);
+            phoneInput.addEventListener('blur', validatePhone);
+            
+            passwordInput.addEventListener('focus', function() {
+                passwordRequirements.style.display = 'block';
+            });
+            
+            passwordInput.addEventListener('blur', function() {
+                if (!this.value) {
+                    passwordRequirements.style.display = 'none';
+                }
+                validatePassword();
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                validatePassword();
+                updatePasswordRequirements(this.value);
+                if (confirmPasswordInput.value) {
+                    validateConfirmPassword();
+                }
+            });
+            
+            confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+            confirmPasswordInput.addEventListener('blur', validateConfirmPassword);
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all fields one last time
+                validateName();
+                validateEmail();
+                validatePhone();
+                validatePassword();
+                validateConfirmPassword();
+                
+                // If all valid, show success message
+                if (isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isConfirmPasswordValid) {
+                    // Show loading state
+                    const buttonText = document.getElementById('buttonText');
+                    buttonText.textContent = 'Processing...';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate API call with animation
+                    setTimeout(() => {
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        
+                        // Create celebration particles
+                        createCelebrationParticles();
+                        
+                        // Reset form after delay
+                        setTimeout(() => {
+                            form.reset();
+                            resetValidation();
+                            form.style.display = 'block';
+                            successMessage.style.display = 'none';
+                            buttonText.textContent = 'Sign Up';
+                            passwordRequirements.style.display = 'none';
+                        }, 5000);
+                    }, 1500);
+                }
+            });
+            
+            // Validation functions
+            function validateName() {
+                const name = nameInput.value.trim();
+                
+                if (name === '') {
+                    showError(nameInput, nameError, 'Name is required');
+                    isNameValid = false;
+                } else if (name.length < 2) {
+                    showError(nameInput, nameError, 'Name must be at least 2 characters');
+                    isNameValid = false;
+                } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                    showError(nameInput, nameError, 'Name can only contain letters and spaces');
+                    isNameValid = false;
+                } else {
+                    hideError(nameInput, nameError);
+                    isNameValid = true;
+                }
+                
+                updateSubmitButton();
+            }
+            
+            function validateEmail() {
+                const email = emailInput.value.trim();
+                
+                if (email === '') {
+                    showError(emailInput, emailError, 'Email is required');
+                    isEmailValid = false;
+                } else if (!emailRegex.test(email)) {
+                    showError(emailInput, emailError, 'Please enter a valid email address');
+                    isEmailValid = false;
+                } else {
+                    hideError(emailInput, emailError);
+                    isEmailValid = true;
+                }
+                
+                updateSubmitButton();
+            }
+            
+            function validatePhone() {
+                const phone = phoneInput.value.trim();
+                
+                if (phone === '') {
+                    showError(phoneInput, phoneError, 'Phone number is required');
+                    isPhoneValid = false;
+                } else if (!phoneRegex.test(phone)) {
+                    showError(phoneInput, phoneError, 'Please enter a valid phone number (XXX-XXX-XXXX)');
+                    isPhoneValid = false;
+                } else {
+                    hideError(phoneInput, phoneError);
+                    isPhoneValid = true;
+                }
+                
+                updateSubmitButton();
+            }
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                
+                // Update password strength meter
+                const strength = checkPasswordStrength(password);
+                updatePasswordStrength(strength);
+                
+                if (password === '') {
+                    showError(passwordInput, passwordError, 'Password is required');
+                    isPasswordValid = false;
+                } else if (password.length < 8) {
+                    showError(passwordInput, passwordError, 'Password must be at least 8 characters');
+                    isPasswordValid = false;
+                } else if (strength.score < 2) {
+                    showError(passwordInput, passwordError, 'Password is too weak');
+                    isPasswordValid = false;
+                } else {
+                    hideError(passwordInput, passwordError);
+                    isPasswordValid = true;
+                }
+                
+                updateSubmitButton();
+            }
+            
+            function updatePasswordRequirements(password) {
+                const requirements = {
+                    length: password.length >= 8,
+                    uppercase: upperCaseRegex.test(password),
+                    lowercase: lowerCaseRegex.test(password),
+                    number: numberRegex.test(password),
+                    special: specialCharRegex.test(password)
+                };
+                
+                const requirementItems = passwordRequirements.querySelectorAll('li');
+                requirementItems.forEach(item => {
+                    const rule = item.getAttribute('data-rule');
+                    if (requirements[rule]) {
+                        item.classList.add('valid');
+                        item.classList.remove('invalid');
+                    } else {
+                        item.classList.add('invalid');
+                        item.classList.remove('valid');
+                    }
+                });
+            }
+            
+            function validateConfirmPassword() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword === '') {
+                    showError(confirmPasswordInput, confirmPasswordError, 'Please confirm your password');
+                    isConfirmPasswordValid = false;
+                } else if (confirmPassword !== password) {
+                    showError(confirmPasswordInput, confirmPasswordError, 'Passwords do not match');
+                    isConfirmPasswordValid = false;
+                } else {
+                    hideError(confirmPasswordInput, confirmPasswordError);
+                    isConfirmPasswordValid = true;
+                }
+                
+                updateSubmitButton();
+            }
+            
+            function checkPasswordStrength(password) {
+                let score = 0;
+                let feedback = '';
+                
+                if (password.length < 1) {
+                    return { score: 0, feedback: '' };
+                }
+                
+                // Length check
+                if (password.length >= 8) score++;
+                if (password.length >= 12) score++;
+                
+                // Complexity checks
+                if (upperCaseRegex.test(password)) score++;
+                if (lowerCaseRegex.test(password)) score++;
+                if (numberRegex.test(password)) score++;
+                if (specialCharRegex.test(password)) score++;
+                
+                // Convert score to 0-4 scale
+                const normalizedScore = Math.min(4, Math.floor(score / 6 * 4));
+                
+                // Provide feedback based on score
+                switch (normalizedScore) {
+                    case 0: feedback = 'Very Weak'; break;
+                    case 1: feedback = 'Weak'; break;
+                    case 2: feedback = 'Fair'; break;
+                    case 3: feedback = 'Strong'; break;
+                    case 4: feedback = 'Very Strong'; break;
+                }
+                
+                return { score: normalizedScore, feedback: feedback };
+            }
+            
+            function updatePasswordStrength(strength) {
+                const colors = ['#ff3860', '#ff7043', '#ffd54f', '#03dac6', '#8a2be2'];
+                const widths = ['20%', '40%', '60%', '80%', '100%'];
+                const strengthClasses = ['very-weak', 'weak', 'fair', 'strong', 'very-strong'];
+                
+                strengthMeter.style.width = widths[strength.score];
+                strengthMeter.style.backgroundColor = colors[strength.score];
+                
+                strengthText.textContent = 'Password strength: ' + strength.feedback;
+                strengthText.className = 'strength-text ' + strengthClasses[strength.score];
+            }
+            
+            function showError(inputElement, errorElement, message) {
+                inputElement.classList.add('error');
+                inputElement.classList.remove('valid');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            
+            function hideError(inputElement, errorElement) {
+                inputElement.classList.remove('error');
+                inputElement.classList.add('valid');
+                errorElement.style.display = 'none';
+            }
+            
+            function updateSubmitButton() {
+                submitBtn.disabled = !(isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isConfirmPasswordValid);
+            }
+            
+            function resetValidation() {
+                // Reset validation flags
+                isNameValid = false;
+                isEmailValid = false;
+                isPhoneValid = false;
+                isPasswordValid = false;
+                isConfirmPasswordValid = false;
+                
+                // Reset UI
+                const inputs = form.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.classList.remove('error', 'valid');
+                });
+                
+                const errorMessages = form.querySelectorAll('.error-message');
+                errorMessages.forEach(msg => {
+                    msg.style.display = 'none';
+                });
+                
+                // Reset password strength
+                strengthMeter.style.width = '0%';
+                strengthMeter.style.backgroundColor = 'rgba(138, 43, 226, 0.1)';
+                strengthText.textContent = 'Password strength';
+                strengthText.className = 'strength-text';
+                
+                // Reset password requirements
+                const requirementItems = passwordRequirements.querySelectorAll('li');
+                requirementItems.forEach(item => {
+                    item.classList.add('invalid');
+                    item.classList.remove('valid');
+                });
+                
+                updateSubmitButton();
+            }
+            
+            function createCosmicBackground() {
+                const cosmicBg = document.getElementById('cosmicBg');
+                
+                // Create stars
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    // Random size between 1px and 3px
+                    const size = Math.random() * 2 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    
+                    // Random position
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random opacity and animation duration
+                    star.style.opacity = Math.random() * 0.8 + 0.2;
+                    star.style.setProperty('--duration', `${Math.random() * 5 + 3}s`);
+                    
+                    cosmicBg.appendChild(star);
+                }
+                
+                // Create nebulas
+                for (let i = 0; i < 3; i++) {
+                    const nebula = document.createElement('div');
+                    nebula.classList.add('nebula');
+                    
+                    // Random size between 100px and 300px
+                    const size = Math.random() * 200 + 100;
+                    nebula.style.width = `${size}px`;
+                    nebula.style.height = `${size}px`;
+                    
+                    // Random position
+                    nebula.style.left = `${Math.random() * 100}%`;
+                    nebula.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random color
+                    const colors = ['#8a2be2', '#03dac6', '#ff7043'];
+                    nebula.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // Random animation duration
+                    nebula.style.setProperty('--duration', `${Math.random() * 40 + 40}s`);
+                    
+                    cosmicBg.appendChild(nebula);
+                }
+            }
+            
+            function createCelebrationParticles() {
+                const container = document.querySelector('.form-container');
+                const colors = ['#8a2be2', '#03dac6', '#ff7043', '#ffd54f', '#ffffff'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('star');
+                    
+                    // Random size between 2px and 6px
+                    const size = Math.random() * 4 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Random position (centered)
+                    particle.style.left = '50%';
+                    particle.style.top = '50%';
+                    
+                    // Random color
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // Random animation
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 100 + 50;
+                    const duration = Math.random() * 1 + 0.5;
+                    
+                    particle.style.transform = `translate(-50%, -50%)`;
+                    particle.style.opacity = '1';
+                    particle.style.animation = `none`;
+                    
+                    container.appendChild(particle);
+                    
+                    // Animate outward
+                    setTimeout(() => {
+                        particle.style.transition = `all ${duration}s ease-out`;
+                        particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                        particle.style.opacity = '0';
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            particle.remove();
+                        }, duration * 1000);
+                    }, 10);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
